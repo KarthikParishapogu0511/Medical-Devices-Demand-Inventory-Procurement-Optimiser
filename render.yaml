@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: medical-optimizer-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        value: https://your-vercel-app-url.vercel.app
+      - key: JWT_SECRET
+        generateValue: true
