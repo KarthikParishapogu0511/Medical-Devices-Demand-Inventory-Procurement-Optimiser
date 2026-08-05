@@ -6,8 +6,10 @@ import path from 'path';
 
 dotenv.config();
 
-const dbPath = process.env.SQLITE_PATH || './backend/data/database.sqlite';
+const dbPath = process.env.SQLITE_PATH || path.resolve(process.cwd(), 'data', 'database.sqlite');
 const dbDir = path.dirname(dbPath);
+
+console.log('Using SQLite DB at:', dbPath);
 
 if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });

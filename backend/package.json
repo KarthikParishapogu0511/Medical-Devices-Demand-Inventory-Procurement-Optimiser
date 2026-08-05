@@ -6,7 +6,11 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "seed": "node data/seed.js"
+    "seed": "node data/seed.js",
+    "import-sql": "node scripts/import_medical_sql.js medical.sql",
+    "db-check": "node scripts/db_check.js",
+    "ensure-db": "node scripts/ensure_db.js",
+    "postinstall": "npm run ensure-db"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

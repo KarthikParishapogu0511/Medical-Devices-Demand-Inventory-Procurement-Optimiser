@@ -7,7 +7,7 @@ import path from 'path';
 
 dotenv.config();
 
-const dbPath = process.env.SQLITE_PATH || './backend/data/database.sqlite';
+const dbPath = process.env.SQLITE_PATH || path.resolve(process.cwd(), 'data', 'database.sqlite');
 const dbDir = path.dirname(dbPath);
 
 if (!fs.existsSync(dbDir)) {
@@ -552,7 +552,7 @@ const seed = async () => {
   console.log('Database seeded successfully.');
 };
 
-seed().then(() => pool.end()).catch((err) => {
+seed().then(() => process.exit(0)).catch((err) => {
   console.error(err);
-  pool.end();
+  process.exit(1);
 });
