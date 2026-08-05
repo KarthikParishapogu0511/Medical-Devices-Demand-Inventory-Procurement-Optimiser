@@ -38,6 +38,15 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ ok: true });
 });
 
+app.get('/api/debug/env', (req, res) => {
+  res.json({
+    NODE_ENV: process.env.NODE_ENV || null,
+    DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'MISSING',
+    JWT_SECRET: process.env.JWT_SECRET ? 'SET' : 'MISSING',
+    FRONTEND_URL: process.env.FRONTEND_URL || null
+  });
+});
+
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-medical-optimizer';
 
 // Middleware: Authenticate JWT Token
@@ -88,7 +97,7 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or inactive user' });
     }
 
-    const validPassword = bcrypt.compareSync(password, user.password_hash);
+    const validPassword = user.password_hash && bcrypt.compareSync(password, user.password_hash);
     if (!validPassword) {
       return res.status(401).json({ error: 'Invalid password' });
     }
