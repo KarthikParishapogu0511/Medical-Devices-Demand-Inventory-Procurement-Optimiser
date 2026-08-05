@@ -1,39 +1,32 @@
 import dotenv from 'dotenv';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
-import fs from 'fs';
-import path from 'path';
 
 dotenv.config();
 
 const dbPath = process.env.SQLITE_PATH || './backend/data/database.sqlite';
-const dbDir = path.dirname(dbPath);
 
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
-}
-
-const openDb = async () => {
-  const db = await open({
+export const openDb = async () => {
+  return open({
     filename: dbPath,
     driver: sqlite3.Database
   });
-  await db.exec('PRAGMA foreign_keys = ON');
-  return db;
 };
+
+const normalizeParams = (text, params = []) => ({ text, params });
 
 export const dbGet = async (sql, params = []) => {
   const db = await openDb();
-  const row = await db.get(sql, params);
+  const result = await db.get(sql, params);
   await db.close();
-  return row || null;
+  return result || null;
 };
 
 export const dbAll = async (sql, params = []) => {
   const db = await openDb();
-  const rows = await db.all(sql, params);
+  const result = await db.all(sql, params);
   await db.close();
-  return rows;
+  return result;
 };
 
 export const dbRun = async (sql, params = []) => {

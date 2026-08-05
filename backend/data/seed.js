@@ -1,20 +1,48 @@
 import bcrypt from 'bcryptjs';
-import { Pool } from 'pg';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const dbPath = process.env.SQLITE_PATH || './backend/data/database.sqlite';
+const dbDir = path.dirname(dbPath);
 
-const db = {
-  query: (text, params) => pool.query(text, params)
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const openDb = async () => {
+  const db = await open({
+    filename: dbPath,
+    driver: sqlite3.Database
+  });
+  await db.exec('PRAGMA foreign_keys = ON');
+  return db;
 };
 
-const run = async (sql, params = []) => db.query(sql, params);
+const run = async (sql, params = []) => {
+  const db = await openDb();
+  const result = await db.run(sql, params);
+  await db.close();
+  return result;
+};
 
 const insertRows = async (sql, rows) => {
-  for (const row of rows) {
-    await run(sql, row);
+  const db = await openDb();
+  await db.exec('BEGIN');
+  try {
+    for (const row of rows) {
+      await db.run(sql, row);
+    }
+    await db.exec('COMMIT');
+  } catch (err) {
+    await db.exec('ROLLBACK');
+    throw err;
+  } finally {
+    await db.close();
   }
 };
 
