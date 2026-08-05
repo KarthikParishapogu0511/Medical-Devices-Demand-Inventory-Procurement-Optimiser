@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 const allowedOrigins = [
-  'http://localhost:5173','https://medical-devices-demand-inventory-procurement-optimis-mf65117ue.vercel.app/',
+  'http://localhost:5173','https://medical-devices-demand-inventory-procurement-optimis-mf65117ue.vercel.app',
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
