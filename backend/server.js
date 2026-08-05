@@ -2,11 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import sqlite3 from 'sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { runForecastAI, runSupplierRiskAI, runPOAnomalyAI } from './services/gemini.js';
+import { dbGet, dbAll, dbRun } from './db.js';
 
 dotenv.config();
 
@@ -36,25 +36,7 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ ok: true });
 });
 
-const dbPath = path.join(__dirname, 'data', 'database.sqlite');
-const db = new sqlite3.Database(dbPath);
-
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-medical-optimizer';
-
-// Database query helpers in Promise form
-const dbGet = (sql, params = []) => new Promise((resolve, reject) => {
-  db.get(sql, params, (err, row) => err ? reject(err) : resolve(row));
-});
-
-const dbAll = (sql, params = []) => new Promise((resolve, reject) => {
-  db.all(sql, params, (err, rows) => err ? reject(err) : resolve(rows));
-});
-
-const dbRun = (sql, params = []) => new Promise((resolve, reject) => {
-  db.run(sql, params, function (err) {
-    err ? reject(err) : resolve(this);
-  });
-});
 
 // Middleware: Authenticate JWT Token
 const authenticateToken = async (req, res, next) => {
@@ -408,8 +390,17 @@ app.post('/api/ai/forecast/:itemId', authenticateToken, async (req, res) => {
       const costEst = reorderQty * item.unit_cost;
       
       await dbRun(
-        `INSERT OR REPLACE INTO ai_recommendations (id, type, target_entity_type, target_entity_id, recommendation_data, confidence_score, explanation, status, model_version)
-         VALUES (?, 'Reorder', 'item', ?, ?, ?, ?, 'Pending Review', 'Gemini 3.5 Flash')`,
+        `INSERT INTO ai_recommendations (id, type, target_entity_type, target_entity_id, recommendation_data, confidence_score, explanation, status, model_version)
+         VALUES (?, 'Reorder', 'item', ?, ?, ?, ?, 'Pending Review', 'Gemini 3.5 Flash')
+         ON CONFLICT (id) DO UPDATE SET
+           type = excluded.type,
+           target_entity_type = excluded.target_entity_type,
+           target_entity_id = excluded.target_entity_id,
+           recommendation_data = excluded.recommendation_data,
+           confidence_score = excluded.confidence_score,
+           explanation = excluded.explanation,
+           status = excluded.status,
+           model_version = excluded.model_version`,
         [recId, item.id, JSON.stringify({ reorder_quantity: reorderQty, supplier_id: 's1', cost_estimate: costEst }), result.confidence_score, result.explanation]
       );
     }
