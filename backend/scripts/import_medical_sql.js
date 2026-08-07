@@ -22,8 +22,6 @@ const normalizeCreate = (line) => {
   line = line.replace(/\bnumeric\b/gi, 'REAL').replace(/\breal\b/gi, 'REAL');
   // replace timestamp without time zone -> TEXT
   line = line.replace(/timestamp without time zone/gi, 'TEXT').replace(/timestamp with(out)? time zone/gi, 'TEXT');
-  // date -> TEXT
-  line = line.replace(/\bdate\b/gi, 'TEXT');
   // boolean -> INTEGER
   line = line.replace(/\bboolean\b/gi, 'INTEGER');
   // DEFAULT CURRENT_TIMESTAMP keep as CURRENT_TIMESTAMP (SQLite supports it)
@@ -36,6 +34,41 @@ const normalizeCreate = (line) => {
 
   const db = await open({ filename: dbPath, driver: sqlite3.Database });
   await db.exec("PRAGMA foreign_keys=OFF;");
+
+  // Earlier imports renamed the `date` column to `TEXT` while normalizing types.
+  // Rebuild that table before replaying the dump so its required columns are valid.
+  const demandHistoryColumns = await db.all('PRAGMA table_info("demand_history")');
+  if (demandHistoryColumns.length && !demandHistoryColumns.some((column) => column.name === 'date')) {
+    const legacyTable = 'demand_history_legacy';
+    await db.exec(`DROP TABLE IF EXISTS "${legacyTable}"`);
+    await db.exec('ALTER TABLE "demand_history" RENAME TO "demand_history_legacy"');
+    await db.exec(`
+      CREATE TABLE "demand_history" (
+        id TEXT PRIMARY KEY,
+        item_id TEXT NOT NULL REFERENCES items(id),
+        date TEXT NOT NULL,
+        quantity_demanded INTEGER NOT NULL,
+        yield_rate REAL DEFAULT 100.0,
+        defect_rate REAL DEFAULT 0.0,
+        complaint_rate REAL DEFAULT 0.0,
+        uptime_percentage REAL DEFAULT 100.0,
+        service_turnaround_days REAL DEFAULT 0.0
+      )
+    `);
+
+    if (demandHistoryColumns.some((column) => column.name === 'TEXT')) {
+      await db.exec(`
+        INSERT OR IGNORE INTO "demand_history"
+          (id, item_id, date, quantity_demanded, yield_rate, defect_rate, complaint_rate, uptime_percentage, service_turnaround_days)
+        SELECT id, item_id, "TEXT", quantity_demanded, yield_rate, defect_rate, complaint_rate, uptime_percentage, service_turnaround_days
+        FROM "${legacyTable}"
+      `);
+    }
+
+    await db.exec(`DROP TABLE "${legacyTable}"`);
+    console.log('Rebuilt demand_history with the correct date column.');
+  }
+
   await db.exec("BEGIN TRANSACTION;");
 
   const rl = readline.createInterface({ input: fs.createReadStream(sqlFile), crlfDelay: Infinity });
@@ -103,7 +136,7 @@ const normalizeCreate = (line) => {
       // prepare placeholders
       const placeholders = vals.map(() => '?').join(',');
       const colsList = copyCols.map(c => `"${c}"`).join(',');
-      const insertSql = `INSERT INTO "${copyTable}" (${colsList}) VALUES (${placeholders});`;
+      const insertSql = `INSERT OR IGNORE INTO "${copyTable}" (${colsList}) VALUES (${placeholders});`;
       try {
         await db.run(insertSql, vals);
         pendingInserts++;
