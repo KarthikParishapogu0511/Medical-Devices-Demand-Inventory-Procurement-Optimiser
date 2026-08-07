@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -49,7 +50,15 @@ app.get('/api/debug/env', (req, res) => {
   });
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-medical-optimizer';
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction && !process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET must be configured in production.');
+}
+
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
+if (!process.env.JWT_SECRET) {
+  console.warn('JWT_SECRET is not set. Generated a temporary development secret.');
+}
 
 // Middleware: Authenticate JWT Token
 const authenticateToken = async (req, res, next) => {
