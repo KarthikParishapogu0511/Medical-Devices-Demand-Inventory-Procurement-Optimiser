@@ -23,7 +23,11 @@ import {
   Search,
   Check,
   X,
-  Plus
+  Plus,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
@@ -294,69 +298,42 @@ function Login({ onLogin, theme, toggleTheme }) {
   ];
 
   return (
-    <div style={{
-      display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh',
-      backgroundColor: 'var(--bg-base)', padding: '1rem'
-    }}>
-      <div className="card" style={{ width: '450px', padding: '2.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: '700' }}>Secure Sign-In</h2>
-          <button onClick={toggleTheme} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}>
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+    <div className="login-page">
+      <section className="login-intro" aria-label="Platform overview">
+        <div className="login-intro-top">
+          <div className="login-brand"><Activity size={22} /> MedSupply Ops</div>
+          <span className="login-status"><span /> System online</span>
         </div>
-
-        {error && (
-          <div style={{
-            backgroundColor: 'var(--danger-glow)', color: 'var(--danger)', padding: '0.75rem',
-            borderRadius: 'var(--radius-sm)', marginBottom: '1.25rem', fontSize: '0.9rem'
-          }}>
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Email Address</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="form-control" required />
-          </div>
-
-          <div className="form-group" style={{ position: 'relative' }}>
-            <label className="form-label">Password</label>
-            <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="form-control" required />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} style={{
-              position: 'absolute', right: '12px', bottom: '10px', background: 'none', border: 'none',
-              color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.85rem'
-            }}>
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', fontSize: '0.85rem' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <input type="checkbox" defaultChecked /> Remember me
-            </label>
-            <a href="#" style={{ color: 'var(--primary)' }}>Forgot Password?</a>
-          </div>
-
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.75rem' }}>
-            Quick-Select Demo Role Accounts (Password: password123):
-          </span>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            {demoRoles.map(r => (
-              <button key={r.email} onClick={() => { setEmail(r.email); setPassword('password123'); }} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.75rem' }}>
-                {r.role}
-              </button>
-            ))}
-          </div>
+        <div className="login-intro-copy">
+          <p className="login-eyebrow"><Sparkles size={15} /> Operational intelligence</p>
+          <h1>Medical Devices Demand, Inventory &amp; Procurement Optimiser</h1>
+          <p className="login-summary">One workspace for planning demand, protecting critical stock, and making procurement decisions with confidence.</p>
         </div>
-      </div>
+        <div className="login-capabilities">
+          <div className="login-capability login-capability-teal"><div className="login-capability-icon"><TrendingUp size={21} /></div><div><strong>Plan demand</strong><span>Spot upcoming device needs early.</span></div></div>
+          <div className="login-capability login-capability-amber"><div className="login-capability-icon"><Package size={21} /></div><div><strong>Protect inventory</strong><span>Keep safety stock and orders visible.</span></div></div>
+          <div className="login-capability login-capability-violet"><div className="login-capability-icon"><Shield size={21} /></div><div><strong>Review decisions</strong><span>Approve recommendations with audit trails.</span></div></div>
+        </div>
+        <p className="login-intro-footer"><Check size={16} /> Role-based access for supply, warehouse, and finance teams.</p>
+      </section>
+
+      <main className="login-panel">
+        <div className="login-panel-inner">
+          <div className="login-panel-header">
+            <div><p className="login-panel-kicker">Secure workspace</p><h2>Welcome back</h2><p>Sign in to continue to your operational dashboard.</p></div>
+            <button onClick={toggleTheme} className="login-theme-button" aria-label="Toggle color theme" title="Toggle color theme">{theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}</button>
+          </div>
+          {error && <div className="login-error" role="alert">{error}</div>}
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group"><label className="form-label" htmlFor="login-email">Work email</label><input id="login-email" type="email" value={email} onChange={e => setEmail(e.target.value)} className="form-control" required /></div>
+            <div className="form-group login-password-field"><label className="form-label" htmlFor="login-password">Password</label><input id="login-password" type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="form-control" required /><button type="button" onClick={() => setShowPassword(!showPassword)} className="login-password-toggle" aria-label={showPassword ? 'Hide password' : 'Show password'} title={showPassword ? 'Hide password' : 'Show password'}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div>
+            <div className="login-options"><label><input type="checkbox" defaultChecked /> Remember me</label><a href="#">Forgot password?</a></div>
+            <button type="submit" className="btn btn-primary login-submit" disabled={loading}>{loading ? 'Signing in...' : <>Sign in <ArrowRight size={18} /></>}</button>
+          </form>
+          <div className="login-demo"><p>Explore with a demo role <span>Password: password123</span></p><div className="login-demo-roles">{demoRoles.map(r => <button key={r.email} type="button" onClick={() => { setEmail(r.email); setPassword('password123'); }}>{r.role}</button>)}</div></div>
+        </div>
+        <p className="login-panel-footer"><Shield size={15} /> Protected operational data</p>
+      </main>
     </div>
   );
 }
