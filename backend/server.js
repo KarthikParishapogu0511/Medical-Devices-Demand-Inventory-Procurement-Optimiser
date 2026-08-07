@@ -17,9 +17,11 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://medical-devices-demand-inventory-procurement-optimis-mf65117ue.vercel.app',
-  'https://medical-devices-demand-inventory-procurement-optimis-l6p17oleb.vercel.app',
-  process.env.FRONTEND_URL
+  'https://medical-devices-demand-inventory-procurement-optimis-3lsqzu6k5.vercel.app',
+  ...String(process.env.FRONTEND_URL || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
 ].filter(Boolean);
 
 app.use(cors({

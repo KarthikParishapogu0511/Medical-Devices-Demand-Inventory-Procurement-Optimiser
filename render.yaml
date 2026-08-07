@@ -11,6 +11,6 @@ services:
       - key: PORT
         value: 10000
       - key: FRONTEND_URL
-        value: https://your-vercel-app-url.vercel.app
+        value: https://medical-devices-demand-inventory-procurement-optimis-3lsqzu6k5.vercel.app
       - key: JWT_SECRET
         generateValue: true
