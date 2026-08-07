@@ -579,11 +579,11 @@ s4	CalibraTech	info@calibratech.com	95	97	1.8	7	Qualified	2026-08-05 10:53:39.51
 --
 
 COPY public.users (id, email, password_hash, role, first_name, last_name, status, last_login, created_at, updated_at) FROM stdin;
-u1	procurement_mgr@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Procurement Manager	Sarah	Jenkins	Active	\N	2026-08-05 10:53:39.505116	2026-08-05 10:53:39.505116
-u3	warehouse_user@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Warehouse User	Marcus	Chen	Active	\N	2026-08-05 10:53:39.509598	2026-08-05 10:53:39.509598
-u4	supplier_user@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Supplier	Dieter	Meier	Active	\N	2026-08-05 10:53:39.510272	2026-08-05 10:53:39.510272
-u5	finance_reviewer@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Finance Reviewer	Elena	Rostova	Active	\N	2026-08-05 10:53:39.510878	2026-08-05 10:53:39.510878
-u2	inventory_planner@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Inventory Planner	Alex	Rivera	Active	2026-08-05 14:38:38.873802	2026-08-05 10:53:39.508816	2026-08-05 10:53:39.508816
+u1	procurement_mgr@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Procurement Manager	Priya	Sharma	Active	\N	2026-08-05 10:53:39.505116	2026-08-05 10:53:39.505116
+u3	warehouse_user@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Warehouse User	Karthik	Nair	Active	\N	2026-08-05 10:53:39.509598	2026-08-05 10:53:39.509598
+u4	supplier_user@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Supplier	Meera	Iyer	Active	\N	2026-08-05 10:53:39.510272	2026-08-05 10:53:39.510272
+u5	finance_reviewer@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Finance Reviewer	Ananya	Gupta	Active	\N	2026-08-05 10:53:39.510878	2026-08-05 10:53:39.510878
+u2	inventory_planner@hospital.com	$2a$08$mBgQoejxiZny347uGq3JKOfQlL2lIpZ2u9nAnoHLjRAQ/puzhjAP.	Inventory Planner	Arjun	Reddy	Active	2026-08-05 14:38:38.873802	2026-08-05 10:53:39.508816	2026-08-05 10:53:39.508816
 \.
 
 
@@ -891,4 +891,3 @@ ALTER TABLE ONLY public.stock_movements
 --
 
 \unrestrict 2z2ocOit6Iy0OzIfL4gkgNaaXHyRZP6EOGUh8UIykH392cFG3Dfyxqr5vUIvVVG
-

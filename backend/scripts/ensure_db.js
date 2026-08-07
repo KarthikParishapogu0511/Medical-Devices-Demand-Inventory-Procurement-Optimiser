@@ -18,11 +18,38 @@ const needsDemandHistoryRepair = async () => {
   }
 };
 
+const syncDemoUserNames = async () => {
+  const db = await open({ filename: dbPath, driver: sqlite3.Database });
+  try {
+    const usersTable = await db.get("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'");
+    if (!usersTable) return;
+
+    const users = [
+      ['u1', 'procurement_mgr@hospital.com', 'Priya', 'Sharma'],
+      ['u2', 'inventory_planner@hospital.com', 'Arjun', 'Reddy'],
+      ['u3', 'warehouse_user@hospital.com', 'Karthik', 'Nair'],
+      ['u4', 'supplier_user@hospital.com', 'Meera', 'Iyer'],
+      ['u5', 'finance_reviewer@hospital.com', 'Ananya', 'Gupta']
+    ];
+
+    for (const [id, email, firstName, lastName] of users) {
+      await db.run(
+        'UPDATE users SET first_name = ?, last_name = ? WHERE id = ? AND email = ?',
+        [firstName, lastName, id, email]
+      );
+    }
+    console.log('Demo user names are up to date.');
+  } finally {
+    await db.close();
+  }
+};
+
 const run = async () => {
   const exists = fs.existsSync(dbPath) && fs.statSync(dbPath).size > 0;
   const repairRequired = exists && await needsDemandHistoryRepair();
 
   if (exists && !repairRequired) {
+    await syncDemoUserNames();
     console.log('Database already exists at', dbPath);
     return;
   }
@@ -36,7 +63,10 @@ const run = async () => {
     env: process.env
   });
 
-  importer.on('close', (code) => process.exit(code === 0 ? 0 : 1));
+  importer.on('close', async (code) => {
+    if (code === 0) await syncDemoUserNames();
+    process.exit(code === 0 ? 0 : 1);
+  });
 };
 
 run().catch((error) => {

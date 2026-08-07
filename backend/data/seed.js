@@ -254,11 +254,11 @@ const seed = async () => {
   const hashedDefaultPassword = bcrypt.hashSync('password123', salt);
 
   const users = [
-    ['u1', 'procurement_mgr@hospital.com', hashedDefaultPassword, 'Procurement Manager', 'Sarah', 'Jenkins'],
-    ['u2', 'inventory_planner@hospital.com', hashedDefaultPassword, 'Inventory Planner', 'Alex', 'Rivera'],
-    ['u3', 'warehouse_user@hospital.com', hashedDefaultPassword, 'Warehouse User', 'Marcus', 'Chen'],
-    ['u4', 'supplier_user@hospital.com', hashedDefaultPassword, 'Supplier', 'Dieter', 'Meier'],
-    ['u5', 'finance_reviewer@hospital.com', hashedDefaultPassword, 'Finance Reviewer', 'Elena', 'Rostova']
+    ['u1', 'procurement_mgr@hospital.com', hashedDefaultPassword, 'Procurement Manager', 'Priya', 'Sharma'],
+    ['u2', 'inventory_planner@hospital.com', hashedDefaultPassword, 'Inventory Planner', 'Arjun', 'Reddy'],
+    ['u3', 'warehouse_user@hospital.com', hashedDefaultPassword, 'Warehouse User', 'Karthik', 'Nair'],
+    ['u4', 'supplier_user@hospital.com', hashedDefaultPassword, 'Supplier', 'Meera', 'Iyer'],
+    ['u5', 'finance_reviewer@hospital.com', hashedDefaultPassword, 'Finance Reviewer', 'Ananya', 'Gupta']
   ];
 
   await insertRows(
