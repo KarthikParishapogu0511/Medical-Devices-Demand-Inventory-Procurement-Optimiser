@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import {
+  Activity,
   LayoutDashboard,
   Package,
   AlertTriangle,
